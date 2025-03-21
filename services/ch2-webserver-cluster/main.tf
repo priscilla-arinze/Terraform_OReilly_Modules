@@ -11,20 +11,6 @@ locals {
 ### Resources
 # Can't use this in conjunction with the autoscaling group; need to use launch template instead (as of October 2024)
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/launch_template
-# resource "aws_launch_configuration" "example" {
-#   image_id        = "ami-04b4f1a9cf54c11d0"
-#   instance_type   = "t2.micro"
-#   security_groups = [aws_security_group.instance.id]
-
-#   user_data = <<-EOF
-#                 #!/bin/bash
-#                 echo "Hello, World" > index.html
-#                 nohup busybox httpd -f -p ${var.server_port} &
-#                 EOF
-#   lifecycle {
-#     create_before_destroy = true
-#   }
-# }
 
 resource "aws_launch_template" "example" {
   image_id               = "ami-04b4f1a9cf54c11d0"
@@ -50,24 +36,6 @@ resource "aws_launch_template" "example" {
 }
 
 # Using launch template instead of aws_instance for autoscaling group
-# resource "aws_instance" "example" {
-#   ami                    = "ami-04b4f1a9cf54c11d0"
-#   instance_type          = "t2.micro"
-#   vpc_security_group_ids = [aws_security_group.instance.id]
-
-#   user_data = <<-EOF
-#                 #!/bin/bash
-#                 echo "Hello, World" > index.html
-#                 nohup busybox httpd -f -p ${var.server_port} &
-#                 EOF
-
-#   user_data_replace_on_change = true
-
-#   tags = {
-#     Name = "terraform-example"
-#   }
-# }
-
 resource "aws_autoscaling_group" "example" {
   launch_template {
     id = aws_launch_template.example.id
